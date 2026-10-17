@@ -14,5 +14,8 @@
   "main": "src/background.js",
   "scripts": {
     "test": "jest"
+  },
+  "devDependencies": {
+    "@jest/globals": "^30.5.2"
   }
 }
