@@ -16,7 +16,10 @@
     "test": "jest"
   },
   "devDependencies": {
+    "@babel/core": "^8.0.7",
+    "@babel/preset-env": "^8.0.7",
     "@jest/globals": "^30.5.2",
+    "babel-jest": "^30.5.2",
     "jest": "^30.5.2"
   }
 }
