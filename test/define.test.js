@@ -1,63 +1,102 @@
 import { define } from '../src/define.js';
+import '@jest/globals';
 
 describe('define', () => {
-    let word, sanitizerStub, fetchDefinitionStub, parseDefinitionStub, stubbedDeps;
+    let word,
+        sanitizedWord,
+        rawDefinition,
+        parsedDefinition,
+        sanitizerStub,
+        fetchDefinitionStub,
+        parseDefinitionStub,
+        stubbedDeps;
 
     beforeEach(() => {
         word = 'palavra';
+        sanitizedWord = 'palavra_sanitized';
+        rawDefinition = { id: 'raw_definition' };
+        parsedDefinition = 'parsed_definition';
 
-        sanitizerStub = jest.fn();
-        fetchDefinitionStub = jest.fn();
-        parseDefinitionStub = jest.fn();
+        sanitizerStub = jest.fn().mockReturnValue('palavra_sanitized');
+        fetchDefinitionStub = jest.fn().mockResolvedValue(rawDefinition);
+        parseDefinitionStub = jest.fn().mockReturnValue(parsedDefinition);
 
         stubbedDeps = {
-            sanitizeWord: sanitizerStub,
-            fetchDefinition: fetchDefinitionStub,
-            parseDefinition: parseDefinitionStub
+            sanitizeFn: sanitizerStub,
+            fetchDefinitionFn: fetchDefinitionStub,
+            parseDefinitionFn: parseDefinitionStub
         };
     });
 
     describe('normal behavior', () => {
-        test('returns a string', () => {
-            const result = define(word);
+        test('returns a string', async () => {
+            const result = await define(word, stubbedDeps);
 
-            expect(word).toBeInstanceOf(string);
+            expect(typeof result).toEqual('string');
         });
 
-        test('calls the sanitize collaborator with the word parameter', () => {
+        test('calls the sanitize collaborator with the word parameter', async () => {
+            await define(word, stubbedDeps);
 
+            expect(sanitizerStub).toHaveBeenCalledWith(word);
         });
 
-        test('calls the fetchDefinition collaborator with the sanitized word', () => {
+        test('calls the fetchDefinition collaborator with the sanitized word', async () => {
+            await define(word, stubbedDeps);
 
+            expect(fetchDefinitionStub).toHaveBeenCalledWith(sanitizedWord)
         });
 
-        test('calls the parseDefinition collaborator with the raw definition', () => {
+        test('calls the parseDefinition collaborator with the raw definition', async () => {
+            await define(word, stubbedDeps);
 
+            expect(parseDefinitionStub).toHaveBeenCalledWith(rawDefinition);
         });
 
-        test('returns the parsed definition', () => {
+        test('returns the parsed definition', async () => {
+            const result = await define(word, stubbedDeps);
 
+            expect(result).toEqual(parsedDefinition);
         });
     });
 
     describe('edge cases', () => {
-        test('returns null if fetchDefinition returns an empty array', () => {
+        test('returns null if fetchDefinition returns an empty array', async () => {
+            fetchDefinitionStub.mockResolvedValue([]);
 
+            const result = await define(word, stubbedDeps);
+
+            expect(result).toBeNull();
         });
     });
 
     describe('error handling', () => {
-        test('bubbles up errors from the sanitize collaborator as defineWordSanitizationError', () => {
+        let mockError;
 
+        beforeEach(() => {
+            mockError = new Error('MOCK_ERROR');
         });
 
-        test('bubbles up errors from the fetchDefinition collaborator as defineWordFetchError', () => {
+        test('bubbles up errors from the sanitize collaborator', async () => {
+            sanitizerStub.mockImplementation(() => {
+                throw mockError;
+            });
 
+            expect(await () => define(word, stubbedDeps)).toThrow(mockError);
         });
 
-        test('bubbles up errors from the pardeDefinition collaborator as defineWordParseError', () => {
+        test('bubbles up errors from the fetchDefinition collaborator', async () => {
+            fetchDefinitionStub.mockRejectedValue(mockError);
 
+            expect(await () => define(word, stubbedDeps)).toThrow(mockError);
+        });
+
+        test('bubbles up errors from the parseDefinition collaborator', async () => {
+            parseDefinitionStub.mockImplementation(() => {
+                throw mockError;
+            });
+
+            expect(await () => define(word, stubbedDeps)).toThrow(mockError);
         });
     });
 });
