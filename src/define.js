@@ -8,7 +8,7 @@ const DEFAULT_DEPS = {
  * returns the definition of a word.
  * @param {string} word - a single word to define.
  * @param {object} deps - dependencies to inject.
- * @returns {string | null} - the definition of the word, or null if no definition is found.
+ * @returns {Promise<string | null>} - the definition of the word, or null if no definition is found.
  * 
  * the 'word' parameter need not be trimmed and may be passed in any case.
  */

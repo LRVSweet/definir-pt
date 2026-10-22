@@ -82,13 +82,13 @@ describe('define', () => {
                 throw mockError;
             });
 
-            expect(await () => define(word, stubbedDeps)).toThrow(mockError);
+            await expect(() => define(word, stubbedDeps)).rejects.toThrow(mockError);
         });
 
         test('bubbles up errors from the fetchDefinition collaborator', async () => {
             fetchDefinitionStub.mockRejectedValue(mockError);
 
-            expect(await () => define(word, stubbedDeps)).toThrow(mockError);
+            await expect(() => define(word, stubbedDeps)).rejects.toThrow(mockError);
         });
 
         test('bubbles up errors from the parseDefinition collaborator', async () => {
@@ -96,7 +96,7 @@ describe('define', () => {
                 throw mockError;
             });
 
-            expect(await () => define(word, stubbedDeps)).toThrow(mockError);
+            await expect(() => define(word, stubbedDeps)).rejects.toThrow(mockError);
         });
     });
 });
