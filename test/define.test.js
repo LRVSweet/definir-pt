@@ -1,5 +1,6 @@
+import { describe, test, expect } from '@jest/globals';
+
 import { define } from '../src/define.js';
-import '@jest/globals';
 
 describe('define', () => {
     let word,
