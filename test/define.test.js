@@ -6,26 +6,26 @@ describe('define', () => {
     let word,
         sanitizedWord,
         rawDefinition,
-        parsedDefinition,
+        formattedDefinition,
         sanitizerStub,
         fetchDefinitionStub,
-        parseDefinitionStub,
+        formatDefinitionStub,
         stubbedDeps;
 
     beforeEach(() => {
         word = 'palavra';
         sanitizedWord = 'palavra_sanitized';
         rawDefinition = { id: 'raw_definition' };
-        parsedDefinition = 'parsed_definition';
+        formattedDefinition = 'parsed_definition';
 
         sanitizerStub = jest.fn().mockReturnValue('palavra_sanitized');
         fetchDefinitionStub = jest.fn().mockResolvedValue(rawDefinition);
-        parseDefinitionStub = jest.fn().mockReturnValue(parsedDefinition);
+        formatDefinitionStub = jest.fn().mockReturnValue(formattedDefinition);
 
         stubbedDeps = {
             sanitizeFn: sanitizerStub,
             fetchDefinitionFn: fetchDefinitionStub,
-            parseDefinitionFn: parseDefinitionStub
+            formatDefinitionFn: formatDefinitionStub
         };
     });
 
@@ -51,13 +51,13 @@ describe('define', () => {
         test('calls the parseDefinition collaborator with the raw definition', async () => {
             await define(word, stubbedDeps);
 
-            expect(parseDefinitionStub).toHaveBeenCalledWith(rawDefinition);
+            expect(formatDefinitionStub).toHaveBeenCalledWith(rawDefinition);
         });
 
         test('returns the parsed definition', async () => {
             const result = await define(word, stubbedDeps);
 
-            expect(result).toEqual(parsedDefinition);
+            expect(result).toEqual(formattedDefinition);
         });
     });
 
@@ -93,7 +93,7 @@ describe('define', () => {
         });
 
         test('bubbles up errors from the parseDefinition collaborator', async () => {
-            parseDefinitionStub.mockImplementation(() => {
+            formatDefinitionStub.mockImplementation(() => {
                 throw mockError;
             });
 

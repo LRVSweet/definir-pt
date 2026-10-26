@@ -1,8 +1,16 @@
 const DEFAULT_DEPS = {
     sanitizeFn: null,
     fetchDefinitionFn: null,
-    parseDefinitionFn: null
+    formatDefinitionFn: null
 };
+
+/**
+ * @typedef {Object} Definition
+ * @property {string} word - The word that is defined.
+ * @property {string} gender - The gender of the word that is defined.
+ * @property {string} partOfSpeech - The part of speech of the word.
+ * @property {string} definition - The definition of the word.
+ */
 
 /**
  * returns the definition of a word.
@@ -13,15 +21,15 @@ const DEFAULT_DEPS = {
  * the 'word' parameter need not be trimmed and may be passed in any case.
  */
 export async function define(word, deps) {
-    const { sanitizeFn, fetchDefinitionFn, parseDefinitionFn } = deps || DEFAULT_DEPS;
+    const { sanitizeFn, fetchDefinitionFn, formatDefinitionFn } = deps || DEFAULT_DEPS;
     const sanitizedWord = sanitizeFn(word);
-    const rawDefinition = await fetchDefinitionFn(sanitizedWord);
+    const definition = await fetchDefinitionFn(sanitizedWord);
 
-    if (!rawDefinition || rawDefinition.length === 0) {
+    if (!definition || definition.length === 0) {
         return null;
     }
 
-    const parsedDefinition = parseDefinitionFn(rawDefinition);
+    const formattedDefinition = formatDefinitionFn(definition);
 
-    return parsedDefinition;
+    return formattedDefinition;
 }
