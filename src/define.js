@@ -1,6 +1,8 @@
+import { _fetchDefinition } from './fetchDefinition.js';
+
 const DEFAULT_DEPS = {
     sanitizeFn: null,
-    fetchDefinitionFn: null,
+    fetchDefinitionFn: _fetchDefinition,
     formatDefinitionFn: null
 };
 
