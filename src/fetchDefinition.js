@@ -16,8 +16,13 @@ export async function _fetchDefinition(word, deps = {}) {
 
 /**
  * @typedef {Object} GetDefinitionDependencies
- * @property {Function} fetchFn - A fetch-compatible function for making HTTP requests.
+ * @property {typeof fetch} fetchFn - A fetch-compatible function for making HTTP requests.
  * @property {URL} targetUrl - The URL endpoint to fetch the definition from.
+ */
+
+/**
+ * The default dependencies for _getDefinition.
+ * @type {GetDefinitionDependencies}
  */
 const DEFAULT_GET_DEFINITION_DEPS = {
     fetchFn: fetch,
@@ -27,7 +32,7 @@ const DEFAULT_GET_DEFINITION_DEPS = {
 /**
  * Fetches the definition of a word from the dicionario aberto API.
  * @param {string} word - The word to define.
- * @param {Object} deps - Optional - Dependencies to inject for testing.
+ * @param {GetDefinitionDependencies} deps - Optional - Dependencies to inject for testing.
  * @returns {Promise<string>}
  * @async
  * @private
