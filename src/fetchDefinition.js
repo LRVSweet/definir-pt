@@ -10,6 +10,20 @@ export async function _fetchDefinition(word, deps = {}) {
 
 }
 
+//=============================================================================
+//GET DEFINITION
+//=============================================================================
+
+/**
+ * @typedef {Object} GetDefinitionDependencies
+ * @property {Function} fetchFn - A fetch-compatible function for making HTTP requests.
+ * @property {URL} targetUrl - The URL endpoint to fetch the definition from.
+ */
+const DEFAULT_GET_DEFINITION_DEPS = {
+    fetchFn: fetch,
+    targetUrl: new URL('https://api.dicionario-aberto.net/')
+};
+
 /**
  * Fetches the definition of a word from the dicionario aberto API.
  * @param {string} word - The word to define.
@@ -18,9 +32,32 @@ export async function _fetchDefinition(word, deps = {}) {
  * @async
  * @private
  */
-export async function _getDefinition(word, deps = {}) {
-
+export async function _getDefinition(word, deps = DEFAULT_GET_DEFINITION_DEPS) {
+    const { fetchFn, targetUrl } = deps;
+    const response = await _getDefinitionFromDictionary(word, targetUrl, fetchFn);
+    _validateResponse(response, word);
+    return await response.json();
 }
+
+//-----------------------------------------------------------------------------
+//Get Definition Helpers
+//-----------------------------------------------------------------------------
+
+async function _getDefinitionFromDictionary(word, targetUrl, fetchFn) {
+    const urlForDefinition = new URL(word, targetUrl);
+
+    return await fetchFn(urlForDefinition);
+}
+
+function _validateResponse(response, word) {
+    if (!response.ok) {
+        throw new Error(`Failed to fetch definition for word ${word}`);
+    }
+}
+
+//=============================================================================
+//PARSE RESPONSE
+//=============================================================================
 
 /**
  * Parses the response from the dicionario aberto.
@@ -32,3 +69,5 @@ export async function _getDefinition(word, deps = {}) {
 export function _parseResponse(response) {
 
 }
+
+

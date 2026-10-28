@@ -7,23 +7,23 @@ describe("_fetchDefintion", () => {
 });
 
 describe("_getDefinition", () => {
-    let word, defineWordUrl, mockResponseJson, mockJsonMethod, mockFetch, mockResponse, mockJson, testDeps;
+    let word, defineWordUrl, mockResponseJson, mockJsonMethod, mockFetch, mockResponse, testDeps;
 
     beforeEach(() => {
         word = "palavra";
 
-        defineWordUrl = new URL("DEFINE_WORD_URL/");
+        defineWordUrl = new URL("https://fake.fakeurl.fake/");
 
         mockResponseJson = { id: "RESPONSE_JSON" };
 
         mockJsonMethod = jest.fn().mockReturnValue(mockResponseJson);
 
-        mockFetch = jest.fn().mockReturnValue(mockResponse);
-
         mockResponse = {
             ok: true,
             json: mockJsonMethod
         };
+
+        mockFetch = jest.fn().mockReturnValue(mockResponse);
 
         testDeps = {
             fetchFn: mockFetch,
@@ -39,7 +39,7 @@ describe("_getDefinition", () => {
         });
 
         test("calls the fetchFn with the correct path", async () => {
-            const expectedPath = `${defineWordUrl}/${word}`;
+            const expectedPath = new URL(word, defineWordUrl);
 
             await _getDefinition(word, testDeps);
 
@@ -61,7 +61,7 @@ describe("_getDefinition", () => {
         test("does not throw if the json-ified response is empty", async () => {
             mockJsonMethod.mockReturnValue(undefined);
 
-            expect(async () => await _getDefinition(word, testDeps)).not.toThrow();
+            expect(() => _getDefinition(word, testDeps)).resolves.not.toThrow();
         });
     });
 
@@ -69,7 +69,7 @@ describe("_getDefinition", () => {
         test("throws if response.ok is false", async () => {
             mockResponse.ok = false;
 
-            expect(async () => await _getDefinition(word, testDeps)).toThrow();
+            expect(() => _getDefinition(word, testDeps)).rejects.toThrow();
         });
 
         test("bubbles up errors from fetchFn", () => {
@@ -79,7 +79,7 @@ describe("_getDefinition", () => {
                 throw mockErr;
             });
 
-            expect(() => _getDefinition(word, testDeps)).toThrow(mockErr);
+            expect(() => _getDefinition(word, testDeps)).rejects.toThrow(mockErr);
         });
     });
 });
