@@ -64,16 +64,21 @@ consider that when I get there.
 
 ### File Organization
 
-src/ will follow the layout below. The same organiztion will be mirrored by
+src/ will follow the layout below. The same organization will be mirrored by
 test/.
 
-src/ -|
-      |- main.py
-      |- bootstrap.py
-      |- interface.py
-      |- coordinator/ - |
-                        |- coordinator.py
-                        |- output-service.py
-                        |- resource-fetcher/ - |- resource-fetcher.py
-                                               |- response-fetcher.py
-                                               |- response-parser.py
+src/
+    |- fetch_definition_xml/
+        |- \_\_init__.py
+        |- main.py
+        |- bootstrap.py
+        |- interface.py
+        |- coordinator/
+            |- \_\_init__.py
+            |- coordinator.py
+            |- output-service.py
+            |- resource-fetcher/
+                |- \_\_init__.py
+                |- resource-fetcher.py
+                |- response-fetcher.py
+                |- response-parser.py
